@@ -293,6 +293,37 @@
     margin: 0;
 }
 
+.chat-input {
+    padding: 1rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.chat-input button {
+    background: #00ff88;
+    color: #1a1a1a;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chat-input button:hover {
+    background: #00e676;
+    transform: translateY(-1px);
+}
+
 /* AI Badge */
 .ai-badge {
     background: rgba(0, 0, 0, 0.1);

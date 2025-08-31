@@ -72,6 +72,78 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Interactive preview functions
+window.sendPreviewMessage = function() {
+    const input = document.getElementById('previewInput');
+    const message = input.value.trim();
+    
+    if (message && window.previewBusinessData) {
+        addPreviewMessage(message, 'user');
+        input.value = '';
+        
+        // Generate contextual response based on business data
+        setTimeout(() => {
+            const response = generateContextualResponse(message, window.previewBusinessData);
+            addPreviewMessage(response, 'bot');
+        }, 1000);
+    }
+};
+
+window.handlePreviewKeyPress = function(event) {
+    if (event.key === 'Enter') {
+        sendPreviewMessage();
+    }
+};
+
+function addPreviewMessage(text, sender) {
+    const messagesDiv = document.getElementById('previewMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.innerHTML = `<p>${text}</p>`;
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function generateContextualResponse(userMessage, businessData) {
+    const businessName = businessData.businessName;
+    const businessType = businessData.businessType;
+    const goal = businessData.goal;
+    
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // Generate responses based on business type and user input
+    if (lowerMessage.includes('quote') || lowerMessage.includes('price') || lowerMessage.includes('cost')) {
+        return `I'd be happy to help you get a quote from ${businessName}! To give you the most accurate estimate, I'll need some details about your project. What type of ${businessType} work do you need done?`;
+    }
+    
+    if (lowerMessage.includes('appointment') || lowerMessage.includes('book') || lowerMessage.includes('schedule')) {
+        return `Great! I can help you schedule an appointment with ${businessName}. What day works best for you? We typically have availability Monday through Friday, and we can also accommodate urgent requests.`;
+    }
+    
+    if (lowerMessage.includes('service') || lowerMessage.includes('offer') || lowerMessage.includes('do')) {
+        return `${businessName} offers a full range of ${businessType} services including repairs, installations, maintenance, and emergency services. We're fully licensed and insured. What specific service are you looking for?`;
+    }
+    
+    if (lowerMessage.includes('emergency') || lowerMessage.includes('urgent') || lowerMessage.includes('help')) {
+        return `I understand this is urgent! ${businessName} provides emergency ${businessType} services 24/7. I'll connect you with our emergency team right away. Can you provide your address and describe the issue?`;
+    }
+    
+    if (lowerMessage.includes('contact') || lowerMessage.includes('phone') || lowerMessage.includes('call')) {
+        return `I'd be happy to connect you with ${businessName}! Our team will call you within the next hour to discuss your project. What's the best phone number to reach you?`;
+    }
+    
+    // Default response
+    const responses = [
+        `Thank you for your message! I'll make sure the ${businessName} team gets back to you soon.`,
+        `That's great! Can you tell me more about your ${businessType} project?`,
+        `I understand your needs. Let me connect you with our ${businessType} specialist.`,
+        `Perfect! I've noted your requirements. Someone from ${businessName} will contact you within the hour.`,
+        `Excellent! I can help you with that. What's your preferred contact method?`
+    ];
+    
+    return responses[Math.floor(Math.random() * responses.length)];
+}
+
 // Call real Supabase Edge Function for AI chatbot generation
 async function simulateGenerateChatbot(data) {
     try {
@@ -220,15 +292,59 @@ function generateSampleResponses(data) {
         tone: tone,
         goal: goal,
         conversation: conversation,
-        embedCode: '<script src="https://wedriveleads.co/bots/user123.js"></script>'
+        embedCode: generateEmbedCode(businessName, businessType)
     };
+}
+
+// Generate embed code for the chatbot
+function generateEmbedCode(businessName, businessType) {
+    return `<div id="wedriveleads-chatbot" data-business="${businessName}" data-type="${businessType}">
+  <div class="chatbot-header">
+    <h3>${businessName}</h3>
+    <p>Professional ${businessType} Services</p>
+  </div>
+  <div class="chatbot-messages" id="chatbot-messages">
+    <div class="message bot-message">
+      <p>Hello! I'm here to help you with your ${businessType} needs. How can I assist you today?</p>
+    </div>
+  </div>
+  <div class="chatbot-input">
+    <input type="text" id="chatbot-input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+// Chatbot functionality
+function sendMessage() {
+  const input = document.getElementById('chatbot-input');
+  const message = input.value.trim();
+  if (message) {
+    addMessage(message, 'user');
+    // Simulate bot response
+    setTimeout(() => {
+      addMessage('Thank you for your message! A ${businessType} specialist will contact you soon.', 'bot');
+    }, 1000);
+    input.value = '';
+  }
+}
+
+function addMessage(text, sender) {
+  const messages = document.getElementById('chatbot-messages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = \`message \${sender}-message\`;
+  messageDiv.innerHTML = \`<p>\${text}</p>\`;
+  messages.appendChild(messageDiv);
+  messages.scrollTop = messages.scrollHeight;
+}
+</script>`;
 }
 
 // Display the generated chatbot
 function displayGeneratedChatbot(data) {
     const chatbotPreview = document.getElementById('chatbotPreview');
     
-    // Create chatbot preview HTML
+    // Create interactive chatbot preview HTML
     const previewHTML = `
         <div class="chatbot-preview">
             <div class="chat-header">
@@ -236,17 +352,24 @@ function displayGeneratedChatbot(data) {
                 <span>${data.businessName} Assistant</span>
                 ${data.isRealAI ? '<span class="ai-badge">🤖 AI Generated</span>' : ''}
             </div>
-            <div class="chat-messages">
+            <div class="chat-messages" id="previewMessages">
                 ${data.conversation.map(msg => `
                     <div class="message ${msg.type}">
                         <p>${msg.message}</p>
                     </div>
                 `).join('')}
             </div>
+            <div class="chat-input">
+                <input type="text" id="previewInput" placeholder="Type your message..." onkeypress="handlePreviewKeyPress(event)">
+                <button onclick="sendPreviewMessage()">Send</button>
+            </div>
         </div>
     `;
     
     chatbotPreview.innerHTML = previewHTML;
+    
+    // Store the business data for responses
+    window.previewBusinessData = data;
 }
 
 // Add some interactive features

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Your Chatbot - WeDriveLeads</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 2rem;
+        }
+        
+        .test-section {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e2e8f0;
+        }
+        
+        .embed-area {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1rem 0;
+            min-height: 200px;
+        }
+        
+        .embed-code {
+            background: #1a1a1a;
+            color: #00ff88;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
+        }
+        
+        .demo-chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid #e2e8f0;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .chatbot-header {
+            background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+            color: #1a1a1a;
+            padding: 1rem;
+            border-radius: 14px 14px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+        }
+        
+        .chatbot-messages {
+            padding: 1rem;
+            height: 350px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            max-width: 80%;
+            font-size: 0.9rem;
+        }
+        
+        .message.bot {
+            background: #e2e8f0;
+            color: #1a1a1a;
+            margin-right: auto;
+        }
+        
+        .message.user {
+            background: #00ff88;
+            color: #1a1a1a;
+            margin-left: auto;
+        }
+        
+        .chatbot-input {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .chatbot-input button {
+            background: #00ff88;
+            color: #1a1a1a;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .close-chatbot {
+            background: none;
+            border: none;
+            color: #1a1a1a;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .demo-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-car"></i>
+                <span>WeDriveLeads</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="generate-bot.html">Generate Bot</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="test-container">
+        <div class="test-section">
+            <h1>🧪 Test Your Chatbot</h1>
+            <p>Paste your embed code below to test how your chatbot will work on your website</p>
+            
+            <div class="embed-area" id="embedArea">
+                <h3>Paste Your Embed Code Here</h3>
+                <textarea id="embedCodeInput" placeholder="Paste the embed code from your generated chatbot..." style="width: 100%; height: 100px; padding: 1rem; border: 1px solid #cbd5e0; border-radius: 8px; font-family: monospace;"></textarea>
+                <button class="test-button" onclick="testEmbedCode()">Test Chatbot</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 Sample Embed Code</h2>
+            <p>Here's an example of what your embed code looks like:</p>
+            <div class="embed-code">
+&lt;div id="wedriveleads-chatbot" data-business="Test Roofing" data-type="Roofing"&gt;
+  &lt;div class="chatbot-header"&gt;
+    &lt;h3&gt;Test Roofing&lt;/h3&gt;
+    &lt;p&gt;Professional Roofing Services&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="chatbot-messages" id="chatbot-messages"&gt;
+    &lt;div class="message bot-message"&gt;
+      &lt;p&gt;Hello! I'm here to help you with your roofing needs. How can I assist you today?&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="chatbot-input"&gt;
+    &lt;input type="text" id="chatbot-input" placeholder="Type your message..."&gt;
+    &lt;button onclick="sendMessage()"&gt;Send&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 How to Use Your Chatbot</h2>
+            <ol>
+                <li><strong>Copy the embed code</strong> from your generated chatbot</li>
+                <li><strong>Paste it above</strong> and click "Test Chatbot"</li>
+                <li><strong>See it in action</strong> - the chatbot will appear on this page</li>
+                <li><strong>Test the conversation</strong> to make sure it works</li>
+                <li><strong>Add to your website</strong> by pasting the code in your HTML</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Demo Chatbot -->
+    <div class="demo-chatbot" id="demoChatbot">
+        <div class="chatbot-header">
+            <span id="chatbotTitle">Test Chatbot</span>
+            <button class="close-chatbot" onclick="closeChatbot()">×</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="message bot">
+                <p>Hello! I'm here to help you. How can I assist you today?</p>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbotInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendDemoMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Demo Toggle Button -->
+    <button class="demo-toggle" id="demoToggle" onclick="toggleChatbot()" style="display: none;">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <script src="js/main.js"></script>
+    <script>
+        function testEmbedCode() {
+            const embedCode = document.getElementById('embedCodeInput').value;
+            if (!embedCode.trim()) {
+                alert('Please paste your embed code first!');
+                return;
+            }
+
+            // Show the demo chatbot
+            document.getElementById('demoChatbot').style.display = 'block';
+            document.getElementById('demoToggle').style.display = 'block';
+            
+            // Extract business name from embed code
+            const businessMatch = embedCode.match(/data-business="([^"]+)"/);
+            if (businessMatch) {
+                document.getElementById('chatbotTitle').textContent = businessMatch[1];
+            }
+
+            // Clear messages and add welcome message
+            const messagesDiv = document.getElementById('chatbotMessages');
+            messagesDiv.innerHTML = `
+                <div class="message bot">
+                    <p>Hello! I'm the AI assistant for your business. How can I help you today?</p>
+                </div>
+            `;
+
+            alert('Chatbot loaded! You can now test the conversation.');
+        }
+
+        function closeChatbot() {
+            document.getElementById('demoChatbot').style.display = 'none';
+            document.getElementById('demoToggle').style.display = 'none';
+        }
+
+        function toggleChatbot() {
+            const chatbot = document.getElementById('demoChatbot');
+            if (chatbot.style.display === 'none') {
+                chatbot.style.display = 'block';
+            } else {
+                chatbot.style.display = 'none';
+            }
+        }
+
+        function sendDemoMessage() {
+            const input = document.getElementById('chatbotInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addDemoMessage(message, 'user');
+                input.value = '';
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    const responses = [
+                        "Thank you for your message! I'll make sure our team gets back to you soon.",
+                        "That's great! Can you tell me more about your project?",
+                        "I understand your needs. Let me connect you with our specialist.",
+                        "Perfect! I've noted your requirements. Someone will contact you within the hour.",
+                        "Excellent! I can help you with that. What's your preferred contact method?"
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addDemoMessage(randomResponse, 'bot');
+                }, 1000);
+            }
+        }
+
+        function addDemoMessage(text, sender) {
+            const messagesDiv = document.getElementById('chatbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = `<p>${text}</p>`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendDemoMessage();
+            }
+        }
+    </script>
+</body>
+</html>
