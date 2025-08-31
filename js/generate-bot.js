@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide loading modal
             loadingModal.style.display = 'none';
             
+            // Store the generated data globally for copy functionality
+            window.lastGeneratedData = response;
+            
             // Display generated chatbot
             displayGeneratedChatbot(response);
             
@@ -51,7 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Copy embed code functionality
     copyCodeBtn.addEventListener('click', function() {
-        const embedCode = '<script src="https://wedriveleads.co/bots/user123.js"></script>';
+        // Get the embed code from the generated data
+        const embedCode = window.lastGeneratedData ? window.lastGeneratedData.embedCode : 'No embed code available';
         
         navigator.clipboard.writeText(embedCode).then(function() {
             // Change button text temporarily
@@ -370,6 +374,12 @@ function displayGeneratedChatbot(data) {
     
     // Store the business data for responses
     window.previewBusinessData = data;
+    
+    // Display the embed code
+    const embedCodeDisplay = document.getElementById('embedCodeDisplay');
+    if (embedCodeDisplay) {
+        embedCodeDisplay.textContent = data.embedCode;
+    }
 }
 
 // Add some interactive features
