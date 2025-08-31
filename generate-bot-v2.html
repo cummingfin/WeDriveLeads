@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your AI Chatbot - WeDriveLeads</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/generate-bot.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .step-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            gap: 1rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+            color: #1a1a1a;
+        }
+        
+        .step.completed {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .step.pending {
+            background: #f1f5f9;
+            color: #9ca3af;
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        .appearance-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-section {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e2e8f0;
+        }
+        
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .color-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .color-option.selected {
+            border-color: #1a1a1a;
+            transform: scale(1.1);
+        }
+        
+        .color-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .training-chatbot {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            height: 70vh;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid #e2e8f0;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .training-header {
+            background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+            color: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 18px 18px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+        }
+        
+        .training-messages {
+            padding: 1.5rem;
+            height: calc(70vh - 140px);
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        
+        .training-input {
+            padding: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .training-input input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+        
+        .training-input button {
+            background: #00ff88;
+            color: #1a1a1a;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .training-input button:hover {
+            background: #00e676;
+            transform: translateY(-1px);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            display: none;
+        }
+        
+        .preview-chatbot {
+            width: 100%;
+            max-width: 350px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+            margin: 0 auto;
+        }
+        
+        .preview-header {
+            background: var(--chatbot-primary, linear-gradient(135deg, #00ff88 0%, #00e676 100%));
+            color: var(--chatbot-text, #1a1a1a);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .preview-messages {
+            padding: 1rem;
+            height: 200px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        
+        .preview-message {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .preview-message.bot {
+            background: #e2e8f0;
+            color: #1a1a1a;
+            margin-right: auto;
+            max-width: 80%;
+        }
+        
+        .preview-message.user {
+            background: var(--chatbot-primary, #00ff88);
+            color: var(--chatbot-text, #1a1a1a);
+            margin-left: auto;
+            max-width: 80%;
+        }
+        
+        .preview-input {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .preview-input input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .preview-input button {
+            background: var(--chatbot-primary, #00ff88);
+            color: var(--chatbot-text, #1a1a1a);
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn-next:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-car"></i>
+                <span>WeDriveLeads</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="generate-bot.html">Original Generator</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="step-container">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" id="step1">
+                <i class="fas fa-palette"></i>
+                <span>1. Customize Appearance</span>
+            </div>
+            <div class="step pending" id="step2">
+                <i class="fas fa-robot"></i>
+                <span>2. Train Your AI</span>
+            </div>
+            <div class="step pending" id="step3">
+                <i class="fas fa-check-circle"></i>
+                <span>3. Get Your Chatbot</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Customize Appearance -->
+        <div class="step-content active" id="step1Content">
+            <h1>🎨 Customize Your Chatbot's Appearance</h1>
+            <p>Design how your chatbot will look and feel to your customers</p>
+            
+            <div class="appearance-form">
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    <div class="form-group">
+                        <label for="businessName">Business Name *</label>
+                        <input type="text" id="businessName" required placeholder="e.g., Smith's Roofing">
+                    </div>
+                    <div class="form-group">
+                        <label for="businessType">Business Type *</label>
+                        <select id="businessType" required>
+                            <option value="">Select your business type</option>
+                            <option value="roofer">Roofer</option>
+                            <option value="plumber">Plumber</option>
+                            <option value="electrician">Electrician</option>
+                            <option value="carpenter">Carpenter</option>
+                            <option value="painter">Painter</option>
+                            <option value="landscaper">Landscaper</option>
+                            <option value="builder">Builder</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="chatbotName">Chatbot Name</label>
+                        <input type="text" id="chatbotName" placeholder="e.g., Smith Assistant">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Design & Colors</h3>
+                    <div class="form-group">
+                        <label>Primary Color</label>
+                        <div class="color-picker" id="primaryColorPicker">
+                            <div class="color-option selected" style="background: #00ff88;" data-color="#00ff88"></div>
+                            <div class="color-option" style="background: #3b82f6;" data-color="#3b82f6"></div>
+                            <div class="color-option" style="background: #8b5cf6;" data-color="#8b5cf6"></div>
+                            <div class="color-option" style="background: #f59e0b;" data-color="#f59e0b"></div>
+                            <div class="color-option" style="background: #ef4444;" data-color="#ef4444"></div>
+                            <div class="color-option" style="background: #10b981;" data-color="#10b981"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Chatbot Tone</label>
+                        <select id="chatbotTone">
+                            <option value="friendly">Friendly & Approachable</option>
+                            <option value="professional">Professional & Formal</option>
+                            <option value="funny">Funny & Casual</option>
+                            <option value="helpful">Helpful & Informative</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="form-section">
+                <h3>Live Preview</h3>
+                <div class="preview-chatbot" id="previewChatbot">
+                    <div class="preview-header">
+                        <i class="fas fa-robot"></i>
+                        <span id="previewName">Your Business Assistant</span>
+                    </div>
+                    <div class="preview-messages">
+                        <div class="preview-message bot">
+                            <p>Hello! I'm here to help you. How can I assist you today?</p>
+                        </div>
+                        <div class="preview-message user">
+                            <p>Hi! I need some help</p>
+                        </div>
+                        <div class="preview-message bot">
+                            <p>Of course! I'd be happy to help you. What do you need assistance with?</p>
+                        </div>
+                    </div>
+                    <div class="preview-input">
+                        <input type="text" placeholder="Type your message...">
+                        <button>Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-next" onclick="nextStep()">Next: Train Your AI</button>
+        </div>
+
+        <!-- Step 2: Training Interface -->
+        <div class="step-content" id="step2Content">
+            <h1>🤖 Train Your AI Assistant</h1>
+            <p>Your chatbot will now ask you questions to learn about your business and provide better responses</p>
+            
+            <div class="form-section">
+                <h3>Training Session</h3>
+                <p>Click the button below to start the training session. Your AI will ask you questions about your business, services, pricing, and more.</p>
+                
+                <button class="btn-next" onclick="startTraining()">Start AI Training Session</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Final Result -->
+        <div class="step-content" id="step3Content">
+            <h1>🎉 Your AI Chatbot is Ready!</h1>
+            <p>Your personalized AI chatbot has been created and trained specifically for your business</p>
+            
+            <div class="form-section">
+                <h3>Your Trained Chatbot</h3>
+                <div id="finalChatbotPreview"></div>
+                
+                <div class="preview-actions" style="margin-top: 2rem;">
+                    <button id="copyFinalCode" class="btn-secondary">
+                        <i class="fas fa-copy"></i>
+                        Copy Embed Code
+                    </button>
+                    <a href="dashboard.html" class="btn-primary">
+                        <i class="fas fa-dashboard"></i>
+                        Go to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Training Chatbot Overlay -->
+    <div class="overlay" id="trainingOverlay"></div>
+    <div class="training-chatbot" id="trainingChatbot">
+        <div class="training-header">
+            <span id="trainingTitle">AI Training Session</span>
+            <button onclick="closeTraining()" style="background: none; border: none; color: inherit; font-size: 1.2rem; cursor: pointer;">×</button>
+        </div>
+        <div class="training-messages" id="trainingMessages">
+            <div class="message bot">
+                <p>Hello! I'm here to learn about your business so I can provide the best possible assistance to your customers. Let's start with some basic information about your company.</p>
+            </div>
+        </div>
+        <div class="training-input">
+            <input type="text" id="trainingInput" placeholder="Type your answer..." onkeypress="handleTrainingKeyPress(event)">
+            <button onclick="sendTrainingMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/generate-bot-v2.js"></script>
+</body>
+</html>
