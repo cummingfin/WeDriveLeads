@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - WeDriveLeads</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/contact.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-car"></i>
+                <span>WeDriveLeads</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="generate-bot.html">Generate Bot</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="leads-tool.html">Lead Tool</a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="contact-header">
+                <h1>Get in Touch</h1>
+                <p>Have questions? Need help? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+            </div>
+
+            <div class="contact-container">
+                <!-- Contact Form -->
+                <div class="contact-form-section">
+                    <div class="form-header">
+                        <h2><i class="fas fa-envelope"></i> Send us a Message</h2>
+                        <p>Fill out the form below and we'll get back to you within 24 hours</p>
+                    </div>
+                    
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name *</label>
+                                <input type="text" id="name" name="name" required placeholder="Your full name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="businessType">Business Type</label>
+                            <select id="businessType" name="businessType">
+                                <option value="">Select your business type</option>
+                                <option value="roofer">Roofer</option>
+                                <option value="plumber">Plumber</option>
+                                <option value="electrician">Electrician</option>
+                                <option value="carpenter">Carpenter</option>
+                                <option value="painter">Painter</option>
+                                <option value="landscaper">Landscaper</option>
+                                <option value="builder">Builder</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject *</label>
+                            <input type="text" id="subject" name="subject" required placeholder="What's this about?">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" rows="6" required placeholder="Tell us how we can help you..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="newsletter" name="newsletter">
+                                <span class="checkmark"></span>
+                                Subscribe to our newsletter for tips and updates
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="contact-info-section">
+                    <div class="info-header">
+                        <h2><i class="fas fa-info-circle"></i> Contact Information</h2>
+                        <p>Here are other ways to reach us</p>
+                    </div>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <div class="method-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="method-content">
+                                <h3>Email Us</h3>
+                                <p>For general inquiries and support</p>
+                                <a href="mailto:support@wedriveleads.co" class="contact-link">support@wedriveleads.co</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="method-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <div class="method-content">
+                                <h3>Live Chat</h3>
+                                <p>Chat with our support team</p>
+                                <button class="contact-link chat-btn">Start Chat</button>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="method-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="method-content">
+                                <h3>Response Time</h3>
+                                <p>We typically respond within 24 hours</p>
+                                <span class="response-time">Mon-Fri: 9AM-6PM GMT</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quick-links">
+                        <h3>Quick Links</h3>
+                        <ul>
+                            <li><a href="pricing.html"><i class="fas fa-pound-sign"></i> Pricing</a></li>
+                            <li><a href="generate-bot.html"><i class="fas fa-robot"></i> Generate Bot</a></li>
+                            <li><a href="leads-tool.html"><i class="fas fa-search"></i> Lead Tool</a></li>
+                            <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Preview -->
+            <div class="faq-preview">
+                <h2>Frequently Asked Questions</h2>
+                <p>Can't find what you're looking for? Check out our FAQ section</p>
+                <div class="faq-preview-grid">
+                    <div class="faq-preview-item">
+                        <h3>How quickly can I get started?</h3>
+                        <p>You can have your chatbot up and running in under 60 seconds with our simple setup process.</p>
+                    </div>
+                    
+                    <div class="faq-preview-item">
+                        <h3>What if I need help installing?</h3>
+                        <p>We offer professional installation services and comprehensive guides to help you get set up.</p>
+                    </div>
+                    
+                    <div class="faq-preview-item">
+                        <h3>Can I cancel anytime?</h3>
+                        <p>Yes! You can cancel your subscription at any time with no penalties or hidden fees.</p>
+                    </div>
+                </div>
+                <a href="pricing.html" class="btn-secondary">View All FAQs</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>WeDriveLeads</h4>
+                    <p>AI-powered lead generation for tradespeople</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="index.html">Home</a>
+                    <a href="generate-bot.html">Generate Bot</a>
+                    <a href="pricing.html">Pricing</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="mailto:support@wedriveleads.co">support@wedriveleads.co</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 WeDriveLeads. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Message Sent Successfully!</h3>
+            <p>Thank you for contacting us. We'll get back to you within 24 hours.</p>
+            <button class="btn-primary close-modal">Close</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>

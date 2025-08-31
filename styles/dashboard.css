@@ -1,0 +1,427 @@
+/* Dashboard Page Styles */
+.main-content {
+    padding-top: 100px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.success-message {
+    background: #ffffff;
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid #00ff88;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.success-icon i {
+    font-size: 2.5rem;
+    color: #1a1a1a;
+}
+
+.success-message h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+}
+
+.success-message p {
+    font-size: 1.25rem;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.dashboard-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Section Styles */
+.embed-section,
+.installation-section,
+.preview-section,
+.next-steps-section,
+.support-section {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.section-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.section-header p {
+    color: #4a5568;
+    font-size: 1rem;
+}
+
+/* Embed Code Section */
+.code-container {
+    background: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.code-header {
+    background: #2d3748;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+}
+
+.code-header span {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.btn-copy {
+    background: #00ff88;
+    color: #1a1a1a;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.btn-copy:hover {
+    background: #00e676;
+    transform: translateY(-1px);
+}
+
+.code-block {
+    padding: 1.5rem;
+    overflow-x: auto;
+}
+
+.code-block code {
+    color: #00ff88;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.code-note {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #00ff88;
+}
+
+.code-note i {
+    color: #00ff88;
+    font-size: 1.1rem;
+}
+
+.code-note p {
+    color: #4a5568;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Installation Help */
+.help-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.help-option {
+    text-align: center;
+    padding: 1.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.help-option:hover {
+    border-color: #00ff88;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.help-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.help-icon i {
+    font-size: 1.5rem;
+    color: #1a1a1a;
+}
+
+.help-option h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #1a1a1a;
+}
+
+.help-option p {
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* Preview Section */
+.preview-container {
+    display: flex;
+    justify-content: center;
+}
+
+.chatbot-preview {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 2px solid #e2e8f0;
+}
+
+.chat-header {
+    background: linear-gradient(135deg, #00ff88 0%, #00e676 100%);
+    color: #1a1a1a;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.chat-messages {
+    padding: 1.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    max-width: 80%;
+    font-size: 0.9rem;
+}
+
+.message.bot {
+    background: #f1f5f9;
+    color: #1a1a1a;
+    margin-right: auto;
+}
+
+.message.user {
+    background: #00ff88;
+    color: #1a1a1a;
+    margin-left: auto;
+}
+
+.message p {
+    margin: 0;
+}
+
+/* Next Steps */
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.step-card {
+    text-align: center;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.step-card:hover {
+    border-color: #00ff88;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.step-number {
+    width: 50px;
+    height: 50px;
+    background: #00ff88;
+    color: #1a1a1a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+}
+
+.step-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #1a1a1a;
+}
+
+.step-card p {
+    color: #4a5568;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Support Section */
+.support-section {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%);
+    color: #ffffff;
+    text-align: center;
+}
+
+.support-content h3 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+.support-content p {
+    color: #e2e8f0;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.support-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.support-actions .btn-primary {
+    background: #00ff88;
+    color: #1a1a1a;
+}
+
+.support-actions .btn-secondary {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+}
+
+.support-actions .btn-secondary:hover {
+    background: #ffffff;
+    color: #1a1a1a;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+    
+    .success-message {
+        padding: 2rem 1.5rem;
+    }
+    
+    .success-message h1 {
+        font-size: 2rem;
+    }
+    
+    .help-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .steps-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .support-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .support-actions a {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding-top: 80px;
+    }
+    
+    .success-message h1 {
+        font-size: 1.75rem;
+    }
+    
+    .embed-section,
+    .installation-section,
+    .preview-section,
+    .next-steps-section,
+    .support-section {
+        padding: 1.5rem;
+    }
+    
+    .code-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .btn-copy {
+        width: 100%;
+        justify-content: center;
+    }
+}

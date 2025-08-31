@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Your Chatbot - WeDriveLeads</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/generate-bot.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-car"></i>
+                <span>WeDriveLeads</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="leads-tool.html">Lead Tool</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Generate Your AI Chatbot</h1>
+                <p>Tell us about your business and we'll create a custom chatbot in under 60 seconds</p>
+            </div>
+
+            <div class="generator-container">
+                <!-- Form Section -->
+                <div class="form-section">
+                    <form id="chatbotForm" class="chatbot-form">
+                        <div class="form-group">
+                            <label for="businessName">Business Name *</label>
+                            <input type="text" id="businessName" name="businessName" required placeholder="e.g., Smith's Roofing">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="businessType">Business Type *</label>
+                            <select id="businessType" name="businessType" required>
+                                <option value="">Select your business type</option>
+                                <option value="roofer">Roofer</option>
+                                <option value="plumber">Plumber</option>
+                                <option value="electrician">Electrician</option>
+                                <option value="carpenter">Carpenter</option>
+                                <option value="painter">Painter</option>
+                                <option value="landscaper">Landscaper</option>
+                                <option value="builder">Builder</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="chatbotTone">Chatbot Tone *</label>
+                            <select id="chatbotTone" name="chatbotTone" required>
+                                <option value="">Select tone</option>
+                                <option value="friendly">Friendly & Approachable</option>
+                                <option value="professional">Professional & Formal</option>
+                                <option value="funny">Funny & Casual</option>
+                                <option value="helpful">Helpful & Informative</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="chatbotGoal">Chatbot Goal *</label>
+                            <select id="chatbotGoal" name="chatbotGoal" required>
+                                <option value="">Select primary goal</option>
+                                <option value="book-jobs">Book Jobs & Appointments</option>
+                                <option value="answer-questions">Answer Customer Questions</option>
+                                <option value="capture-leads">Capture Lead Information</option>
+                                <option value="provide-quotes">Provide Quick Quotes</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="businessDescription">Business Description (Optional)</label>
+                            <textarea id="businessDescription" name="businessDescription" rows="3" placeholder="Tell us a bit more about your services, location, or what makes you unique..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-generate">
+                            <i class="fas fa-magic"></i>
+                            Generate My Chatbot
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section">
+                    <div class="preview-header">
+                        <h3>Your Chatbot Preview</h3>
+                        <p>See how your chatbot will look and behave</p>
+                    </div>
+                    
+                    <div id="chatbotPreview" class="chatbot-preview-container">
+                        <div class="preview-placeholder">
+                            <i class="fas fa-robot"></i>
+                            <p>Fill out the form to see your chatbot preview</p>
+                        </div>
+                    </div>
+
+                    <div id="generatedContent" class="generated-content" style="display: none;">
+                        <div class="preview-actions">
+                            <button id="copyCodeBtn" class="btn-secondary">
+                                <i class="fas fa-copy"></i>
+                                Copy Embed Code
+                            </button>
+                            <a href="dashboard.html" class="btn-primary">
+                                <i class="fas fa-dashboard"></i>
+                                Go to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="loading-modal" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Generating Your Chatbot...</h3>
+            <p>Our AI is creating a custom chatbot for your business</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>WeDriveLeads</h4>
+                    <p>AI-powered lead generation for tradespeople</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="index.html">Home</a>
+                    <a href="pricing.html">Pricing</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="mailto:support@wedriveleads.co">support@wedriveleads.co</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 WeDriveLeads. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/env-loader.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/generate-bot.js"></script>
+</body>
+</html>
