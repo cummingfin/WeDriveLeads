@@ -100,53 +100,31 @@ class SecureEnvLoader {
         if (!this.config.supabase_anon_key) missing.push('Supabase Anon Key');
         return missing;
     }
+
+    // Expose configuration to window object for easy access
+    exposeToWindow() {
+        if (this.loaded) {
+            window.env = this.config;
+            window.SUPABASE_ANON_KEY = this.config.supabase_anon_key;
+            window.SUPABASE_URL = this.config.supabase_url;
+            window.OPENAI_API_KEY = this.config.openai_api_key;
+        }
+    }
 }
 
 // Create global instance
-window.envLoader = new SecureEnvLoader();
+window.secureEnvLoader = new SecureEnvLoader();
 
-// Auto-load configuration
-document.addEventListener('DOMContentLoaded', async () => {
-    await window.envLoader.loadConfig();
-    
-    // Check if configuration is complete
-    if (!window.envLoader.isConfigComplete()) {
-        console.log('Configuration incomplete. Missing:', window.envLoader.getMissingConfig());
-        
-        // Show setup instructions
-        showSetupInstructions();
-    } else {
-        console.log('Configuration loaded successfully');
-    }
+// Auto-load configuration when script loads
+window.secureEnvLoader.loadConfig().then(() => {
+    window.secureEnvLoader.exposeToWindow();
+    console.log('Environment configuration loaded');
+}).catch(error => {
+    console.error('Failed to load environment configuration:', error);
 });
 
-// Show setup instructions for missing configuration
-function showSetupInstructions() {
-    const setupDiv = document.createElement('div');
-    setupDiv.innerHTML = `
-        <div style="
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-            color: #92400e;
-        ">
-            <h4>🔧 Configuration Required</h4>
-            <p>To test the OpenAI API, you need to set up your configuration:</p>
-            <ol>
-                <li>Open your browser's Developer Tools (F12)</li>
-                <li>Go to the Console tab</li>
-                <li>Run: <code>envLoader.set('openai_api_key', 'your-api-key-here')</code></li>
-                <li>Replace 'your-api-key-here' with your actual OpenAI API key</li>
-            </ol>
-            <p><strong>Note:</strong> This is for development only. In production, keys are stored securely server-side.</p>
-        </div>
-    `;
-    
-    // Insert at the top of the page
-    const container = document.querySelector('.test-container');
-    if (container) {
-        container.insertBefore(setupDiv, container.firstChild);
-    }
+// For development - allow manual configuration
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.log('Development mode: You can manually set environment variables');
+    console.log('Example: window.secureEnvLoader.set("supabase_anon_key", "your-key-here")');
 }

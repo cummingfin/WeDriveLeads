@@ -395,6 +395,14 @@ async function trainAIModel() {
         // Show training status
         addTrainingMessage("🤖 Training in progress...", 'bot');
         
+        // Get Supabase key
+        const supabaseKey = getSupabaseKey();
+        
+        if (!supabaseKey) {
+            // No Supabase key available, use fallback immediately
+            throw new Error('Supabase not configured, using fallback mode');
+        }
+        
         // Prepare the training data
         const trainingPrompt = createTrainingPrompt();
         
@@ -403,7 +411,7 @@ async function trainAIModel() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getSupabaseKey()}`
+                'Authorization': `Bearer ${supabaseKey}`
             },
             body: JSON.stringify({
                 prompt: trainingPrompt,
@@ -489,7 +497,7 @@ async function trainAIModel() {
                         <button onclick="exitTestMode()" style="background: #00ff88; color: #1a1a1a; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
                             ✅ I'm Happy - Get My Embed Code
                         </button>
-                    </div>
+                        </div>
                 `;
                 messagesDiv.appendChild(exitDiv);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -679,9 +687,23 @@ function generateBasicResponse(userMessage) {
 }
 
 function getSupabaseKey() {
-    // Get Supabase anon key from environment or use a default
-    // In production, this should come from your environment configuration
-    return process.env.SUPABASE_ANON_KEY || 'your-supabase-anon-key';
+    // In the browser, we need to get the Supabase key from the environment loader
+    // or use a fallback approach
+    
+    // Try to get from window object if set by env-loader
+    if (window.SUPABASE_ANON_KEY) {
+        return window.SUPABASE_ANON_KEY;
+    }
+    
+    // Try to get from env-loader if available
+    if (window.env && window.env.SUPABASE_ANON_KEY) {
+        return window.env.SUPABASE_ANON_KEY;
+    }
+    
+    // For now, we'll use a placeholder that will trigger the fallback
+    // In production, this should be properly configured
+    console.warn('Supabase key not found, using fallback mode');
+    return null;
 }
 
 function exitTestMode() {
