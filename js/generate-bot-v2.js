@@ -345,18 +345,26 @@ function sendTrainingMessage() {
     addTrainingMessage(message, 'user');
     input.value = '';
     
-    // Store the answer
-    const questions = getQuestionsForBusinessType(businessData.businessType);
-    const currentQuestion = questions[currentQuestionIndex];
-    trainingData[currentQuestion.key] = message;
-    
-    // Move to next question
-    currentQuestionIndex++;
-    
-    // Ask next question after a short delay
-    setTimeout(() => {
-        askNextQuestion();
-    }, 1000);
+    if (window.testMode) {
+        // In test mode, generate AI response
+        setTimeout(() => {
+            const aiResponse = generateTestResponse(message);
+            addTrainingMessage(aiResponse, 'bot');
+        }, 1000);
+    } else {
+        // In training mode, store the answer and ask next question
+        const questions = getQuestionsForBusinessType(businessData.businessType);
+        const currentQuestion = questions[currentQuestionIndex];
+        trainingData[currentQuestion.key] = message;
+        
+        // Move to next question
+        currentQuestionIndex++;
+        
+        // Ask next question after a short delay
+        setTimeout(() => {
+            askNextQuestion();
+        }, 1000);
+    }
 }
 
 function addTrainingMessage(text, sender) {
@@ -378,9 +386,140 @@ function completeTraining() {
     addTrainingMessage("Perfect! I've learned everything I need to know about your business. Let me create your personalized AI chatbot now.", 'bot');
     
     setTimeout(() => {
+        addTrainingMessage("Your AI is ready! Would you like to test it first, or go straight to getting your embed code?", 'bot');
+        showTestOptions();
+    }, 2000);
+}
+
+function showTestOptions() {
+    const messagesDiv = document.getElementById('trainingMessages');
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'message bot';
+    optionsDiv.innerHTML = `
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+            <button onclick="startTestMode()" style="background: #00ff88; color: #1a1a1a; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                🧪 Test My AI
+            </button>
+            <button onclick="skipTestAndGenerate()" style="background: #e2e8f0; color: #1a1a1a; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                🚀 Get Embed Code
+            </button>
+        </div>
+    `;
+    messagesDiv.appendChild(optionsDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function startTestMode() {
+    addTrainingMessage("Great! Let's test your AI. I'll switch to test mode where you can ask questions and see how your trained chatbot responds.", 'user');
+    
+    setTimeout(() => {
+        addTrainingMessage("🧪 **TEST MODE ACTIVATED**\n\nI'm now your trained AI assistant for " + businessData.businessName + ". Ask me anything about your business, services, pricing, or anything a customer might ask!", 'bot');
+        
+        // Change the input placeholder to indicate test mode
+        const trainingInput = document.getElementById('trainingInput');
+        trainingInput.placeholder = "Ask me anything about your business...";
+        
+        // Add some sample questions to help users test
+        setTimeout(() => {
+            addTrainingMessage("💡 **Try asking me:**\n• What services do you offer?\n• What are your prices?\n• Do you offer emergency services?\n• What areas do you serve?\n• What makes you different from competitors?", 'bot');
+            
+            // Add exit test mode button
+            const messagesDiv = document.getElementById('trainingMessages');
+            const exitDiv = document.createElement('div');
+            exitDiv.className = 'message bot';
+            exitDiv.innerHTML = `
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
+                    <p style="margin-bottom: 0.5rem;">Ready to get your embed code?</p>
+                    <button onclick="exitTestMode()" style="background: #00ff88; color: #1a1a1a; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        ✅ I'm Happy - Get My Embed Code
+                    </button>
+                </div>
+            `;
+            messagesDiv.appendChild(exitDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 1000);
+        
+        // Switch to test mode
+        window.testMode = true;
+    }, 1000);
+}
+
+function exitTestMode() {
+    addTrainingMessage("Perfect! I'm glad you're happy with your trained AI. Let me generate your embed code now.", 'user');
+    
+    setTimeout(() => {
+        addTrainingMessage("Generating your personalized embed code with all your business knowledge...", 'bot');
+        
+        setTimeout(() => {
+            closeTraining();
+            generateFinalChatbot();
+        }, 2000);
+    }, 1000);
+}
+
+function skipTestAndGenerate() {
+    addTrainingMessage("Skipping test mode and generating your embed code...", 'user');
+    
+    setTimeout(() => {
         closeTraining();
         generateFinalChatbot();
-    }, 2000);
+    }, 1000);
+}
+
+function generateTestResponse(userMessage) {
+    const lowerMessage = userMessage.toLowerCase();
+    const services = trainingData.services || 'professional services';
+    const serviceAreas = trainingData.serviceAreas || 'your area';
+    const uniquePoints = trainingData.uniqueSellingPoints || 'quality work and excellent customer service';
+    const pricing = trainingData.pricing || 'competitive pricing';
+    const guarantees = trainingData.guarantees || 'satisfaction guarantee';
+    const businessHours = trainingData.businessHours || 'Monday to Friday';
+    const emergencyServices = trainingData.emergencyServices || 'emergency services available';
+    const responseTime = trainingData.responseTime || 'within 24 hours';
+    
+    // Generate contextual responses based on the user's question
+    if (lowerMessage.includes('service') || lowerMessage.includes('offer') || lowerMessage.includes('do')) {
+        return `At ${businessData.businessName}, we offer ${services} in ${serviceAreas}. We're known for ${uniquePoints} and provide ${guarantees} on all our work.`;
+    }
+    
+    if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('quote') || lowerMessage.includes('how much')) {
+        return `We offer ${pricing} for our services. I'd be happy to provide you with a detailed quote based on your specific needs. Can you tell me more about your project?`;
+    }
+    
+    if (lowerMessage.includes('guarantee') || lowerMessage.includes('warranty')) {
+        return `We provide ${guarantees} on all our work. Your satisfaction is our top priority, and we stand behind the quality of our services.`;
+    }
+    
+    if (lowerMessage.includes('hour') || lowerMessage.includes('time') || lowerMessage.includes('when') || lowerMessage.includes('available')) {
+        return `We're available ${businessHours}. ${emergencyServices} and we respond to inquiries ${responseTime}.`;
+    }
+    
+    if (lowerMessage.includes('emergency') || lowerMessage.includes('urgent') || lowerMessage.includes('asap')) {
+        return `${emergencyServices}. Please provide your contact information and describe the issue, and we'll get back to you immediately.`;
+    }
+    
+    if (lowerMessage.includes('area') || lowerMessage.includes('serve') || lowerMessage.includes('location') || lowerMessage.includes('where')) {
+        return `We serve ${serviceAreas}. If you're in our service area, we'd be happy to help with your project!`;
+    }
+    
+    if (lowerMessage.includes('different') || lowerMessage.includes('unique') || lowerMessage.includes('special') || lowerMessage.includes('why choose')) {
+        return `What sets ${businessData.businessName} apart is ${uniquePoints}. We're committed to ${guarantees} and providing ${pricing} for quality work.`;
+    }
+    
+    if (lowerMessage.includes('contact') || lowerMessage.includes('phone') || lowerMessage.includes('email') || lowerMessage.includes('call')) {
+        return `Thank you for your interest! I'll make sure the ${businessData.businessName} team gets back to you ${responseTime}. You can also leave your contact information and I'll have someone reach out to you.`;
+    }
+    
+    if (lowerMessage.includes('experience') || lowerMessage.includes('years') || lowerMessage.includes('qualified') || lowerMessage.includes('certified')) {
+        return `Our team at ${businessData.businessName} is highly qualified and experienced in ${services}. We maintain the highest standards of quality and safety in all our work.`;
+    }
+    
+    if (lowerMessage.includes('estimate') || lowerMessage.includes('quote') || lowerMessage.includes('assessment')) {
+        return `I'd be happy to help you get an estimate! Can you provide some details about your project? This will help me give you the most accurate quote possible.`;
+    }
+    
+    // Default response for questions not covered
+    return `Thank you for your question! I'm here to help with any information about ${businessData.businessName}. Is there anything specific about our ${services} that you'd like to know more about?`;
 }
 
 function closeTraining() {
