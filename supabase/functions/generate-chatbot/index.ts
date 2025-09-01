@@ -7,28 +7,29 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Get the request body
-    const { prompt, businessName, businessType, tone, goal, description } = await req.json()
+    const { prompt, businessName, businessType, tone, goal, description, trainingData } = await req.json()
 
-    // Validate required fields
-    if (!prompt || !businessName || !businessType) {
-      throw new Error('Missing required fields: prompt, businessName, businessType')
+    if (!businessName || !businessType) {
+      throw new Error('Missing required fields: businessName, businessType')
     }
 
-    // Get OpenAI API key from environment
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openaiApiKey) {
       throw new Error('OpenAI API key not configured')
     }
 
-    // Create the AI prompt
-    const aiPrompt = `Create a professional chatbot introduction for a ${businessType} business called "${businessName}".
+    // Create a comprehensive training prompt if trainingData is provided
+    let aiPrompt = prompt
+    if (trainingData && Object.keys(trainingData).length > 0) {
+      aiPrompt = createComprehensivePrompt(businessName, businessType, tone, trainingData)
+    } else {
+      // Fallback to basic prompt
+      aiPrompt = `Create a professional chatbot introduction for a ${businessType} business called "${businessName}".
 
 Business Details:
 - Type: ${businessType}
@@ -44,8 +45,8 @@ Requirements:
 - Focus on lead generation
 
 Format the response as a natural, conversational introduction that the chatbot would use to greet visitors.`
+    }
 
-    // Call OpenAI API
     const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -57,14 +58,14 @@ Format the response as a natural, conversational introduction that the chatbot w
         messages: [
           {
             role: 'system',
-            content: 'You are a professional business consultant specializing in creating engaging chatbot introductions for tradespeople and service businesses.'
+            content: 'You are a professional business consultant specializing in creating engaging, natural-sounding chatbot responses for tradespeople and service businesses. Your responses should sound human, not robotic, and should be based on the specific business information provided.'
           },
           {
             role: 'user',
             content: aiPrompt
           }
         ],
-        max_tokens: 200,
+        max_tokens: 500,
         temperature: 0.7,
       }),
     })
@@ -77,24 +78,24 @@ Format the response as a natural, conversational introduction that the chatbot w
     const openaiData = await openaiResponse.json()
     const chatbotIntro = openaiData.choices[0]?.message?.content || 'Unable to generate chatbot introduction.'
 
-    // Generate sample responses
-    const sampleResponses = generateSampleResponses(businessType, tone)
+    // Generate intelligent sample responses based on training data
+    const sampleResponses = generateIntelligentResponses(businessType, tone, trainingData)
 
-    // Create the response
     const response = {
       success: true,
       chatbotIntro,
       sampleResponses,
-      embedCode: generateEmbedCode(businessName, businessType),
+      embedCode: generateEmbedCode(businessName, businessType, trainingData),
       usage: {
         tokens: openaiData.usage?.total_tokens || 0,
         cost: calculateCost(openaiData.usage?.total_tokens || 0)
-      }
+      },
+      trainingData: trainingData || {}
     }
 
     return new Response(
       JSON.stringify(response),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200
       }
@@ -102,19 +103,108 @@ Format the response as a natural, conversational introduction that the chatbot w
 
   } catch (error) {
     console.error('Error:', error.message)
-    
+
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message 
+      JSON.stringify({
+        success: false,
+        error: error.message
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400
       }
     )
   }
 })
+
+function createComprehensivePrompt(businessName: string, businessType: string, tone: string, trainingData: any): string {
+  const services = trainingData.services || 'professional services'
+  const serviceAreas = trainingData.serviceAreas || 'your area'
+  const uniquePoints = trainingData.uniqueSellingPoints || 'quality work and excellent customer service'
+  const pricing = trainingData.pricing || 'competitive pricing'
+  const guarantees = trainingData.guarantees || 'satisfaction guarantee'
+  const businessHours = trainingData.businessHours || 'Monday to Friday'
+  const emergencyServices = trainingData.emergencyServices || 'emergency services available'
+  const responseTime = trainingData.responseTime || 'within 24 hours'
+
+  return `Create a comprehensive, natural-sounding AI chatbot for ${businessName}, a ${businessType} business.
+
+Business Details:
+- Name: ${businessName}
+- Type: ${businessType}
+- Services: ${services}
+- Service Areas: ${serviceAreas}
+- Unique Selling Points: ${uniquePoints}
+- Pricing: ${pricing}
+- Guarantees: ${guarantees}
+- Business Hours: ${businessHours}
+- Emergency Services: ${emergencyServices}
+- Response Time: ${responseTime}
+
+Additional Training Data:
+${Object.entries(trainingData).map(([key, value]) => `${key}: ${value}`).join('\n')}
+
+Instructions:
+Create an AI chatbot that responds naturally and professionally to customer inquiries. The AI should:
+
+1. Sound completely human and conversational, not robotic or templated
+2. Provide detailed, helpful responses based on the specific business information
+3. Ask follow-up questions when appropriate to generate leads
+4. Maintain a ${tone} tone throughout all interactions
+5. Focus on lead generation and excellent customer service
+6. Use the exact business information provided, not generic responses
+7. Sound like a knowledgeable employee who really knows this business
+
+The AI should be able to handle questions about:
+- Services offered and specializations
+- Pricing and quotes
+- Service areas and coverage
+- Guarantees and warranties
+- Business hours and availability
+- Emergency services and response times
+- What makes this business unique
+- Contact information and next steps
+
+Make the responses sound like they're coming from someone who actually works at ${businessName} and knows the business inside out.`
+}
+
+function generateIntelligentResponses(businessType: string, tone: string, trainingData: any): string[] {
+  if (!trainingData || Object.keys(trainingData).length === 0) {
+    // Fallback to basic responses
+    return generateSampleResponses(businessType, tone)
+  }
+
+  // Generate intelligent responses based on training data
+  const responses = []
+  
+  if (trainingData.services) {
+    responses.push(`I can help you with ${trainingData.services}. What specific service do you need?`)
+  }
+  
+  if (trainingData.serviceAreas) {
+    responses.push(`We serve ${trainingData.serviceAreas}. Are you in our service area?`)
+  }
+  
+  if (trainingData.pricing) {
+    responses.push(`Our pricing is ${trainingData.pricing}. I'd be happy to provide you with a detailed quote.`)
+  }
+  
+  if (trainingData.emergencyServices) {
+    responses.push(`${trainingData.emergencyServices}. What's the issue you're experiencing?`)
+  }
+  
+  if (trainingData.uniqueSellingPoints) {
+    responses.push(`What sets us apart is ${trainingData.uniqueSellingPoints}. How can I help you today?`)
+  }
+
+  // Fill remaining slots with basic responses if needed
+  while (responses.length < 3) {
+    responses.push(generateSampleResponses(businessType, tone)[responses.length] || 
+      `I can help you with your ${businessType} needs. What do you need assistance with?`)
+  }
+
+  return responses.slice(0, 3)
+}
 
 function generateSampleResponses(businessType: string, tone: string): string[] {
   const responses = {
@@ -140,7 +230,6 @@ function generateSampleResponses(businessType: string, tone: string): string[] {
     ]
   }
 
-  // Determine business category
   let category = 'general'
   if (businessType.toLowerCase().includes('roof')) category = 'roofing'
   if (businessType.toLowerCase().includes('plumb')) category = 'plumbing'
@@ -149,7 +238,11 @@ function generateSampleResponses(businessType: string, tone: string): string[] {
   return responses[category] || responses.general
 }
 
-function generateEmbedCode(businessName: string, businessType: string): string {
+function generateEmbedCode(businessName: string, businessType: string, trainingData?: any): string {
+  const services = trainingData?.services || 'professional services'
+  const serviceAreas = trainingData?.serviceAreas || 'your area'
+  const uniquePoints = trainingData?.uniqueSellingPoints || 'quality work and excellent customer service'
+  
   return `<div id="wedriveleads-chatbot" data-business="${businessName}" data-type="${businessType}">
   <div class="chatbot-header">
     <h3>${businessName}</h3>
@@ -167,20 +260,46 @@ function generateEmbedCode(businessName: string, businessType: string): string {
 </div>
 
 <script>
-// Chatbot functionality will be loaded here
-// This is a placeholder for the actual chatbot implementation
+// Intelligent chatbot functionality based on training data
+const businessData = ${JSON.stringify({
+  businessName,
+  businessType,
+  services,
+  serviceAreas,
+  uniquePoints,
+  ...trainingData
+})}
+
 function sendMessage() {
   const input = document.getElementById('chatbot-input');
   const message = input.value.trim();
   if (message) {
-    // Add user message
     addMessage(message, 'user');
-    // Simulate bot response
+    // Generate intelligent response based on training data
     setTimeout(() => {
-      addMessage('Thank you for your message! A ${businessType} specialist will contact you soon.', 'bot');
+      const response = generateIntelligentResponse(message);
+      addMessage(response, 'bot');
     }, 1000);
     input.value = '';
   }
+}
+
+function generateIntelligentResponse(userMessage) {
+  const lowerMessage = userMessage.toLowerCase();
+  
+  if (lowerMessage.includes('service') || lowerMessage.includes('offer') || lowerMessage.includes('do')) {
+    return \`At \${businessData.businessName}, we specialize in \${businessData.services}. We serve \${businessData.serviceAreas} and what really sets us apart is \${businessData.uniquePoints}. We're committed to providing exceptional service and ensuring every customer is completely satisfied with our work.\`;
+  }
+  
+  if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('quote')) {
+    return \`We offer competitive pricing for our services. I'd be happy to provide you with a detailed quote based on your specific needs. Can you tell me more about your project?\`;
+  }
+  
+  if (lowerMessage.includes('area') || lowerMessage.includes('serve') || lowerMessage.includes('where')) {
+    return \`We serve \${businessData.serviceAreas}. If you're in our service area, we'd be happy to help with your project! We're committed to providing reliable \${businessData.businessType} services to our local community.\`;
+  }
+  
+  return \`Thank you for your message! I'll make sure the \${businessData.businessName} team gets back to you soon. Is there anything specific about our \${businessData.services} that you'd like to know more about?\`;
 }
 
 function addMessage(text, sender) {
@@ -195,9 +314,7 @@ function addMessage(text, sender) {
 }
 
 function calculateCost(tokens: number): number {
-  // GPT-3.5-turbo pricing: $0.002 per 1K tokens
-  // Convert to pence for UK pricing
   const costUSD = (tokens / 1000) * 0.002
-  const costGBP = costUSD * 0.8 // Approximate USD to GBP conversion
-  return Math.round(costGBP * 100) // Convert to pence
+  const costGBP = costUSD * 0.8
+  return Math.round(costGBP * 100)
 }
