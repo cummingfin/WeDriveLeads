@@ -390,16 +390,46 @@ function completeTraining() {
     }, 2000);
 }
 
+// Get Supabase URL from configuration or prompt user
+function getSupabaseUrl() {
+    // Try to get from localStorage first
+    const storedUrl = localStorage.getItem('wedriveleads_supabase_url');
+    if (storedUrl) {
+        return storedUrl;
+    }
+    
+    // If no URL stored, prompt user to set it
+    const userUrl = prompt(`Please enter your Supabase project URL:
+    
+Example: https://abcdefghijklmnop.supabase.co
+
+You can find this in your Supabase dashboard under Settings → API.`);
+    
+    if (userUrl && userUrl.trim()) {
+        const cleanUrl = userUrl.trim().replace(/\/$/, ''); // Remove trailing slash
+        localStorage.setItem('wedriveleads_supabase_url', cleanUrl);
+        return cleanUrl;
+    }
+    
+    return null;
+}
+
 async function trainAIModel() {
     try {
         // Show training status
         addTrainingMessage("🤖 Training in progress...", 'bot');
         
+        // Get Supabase URL
+        const supabaseUrl = getSupabaseUrl();
+        if (!supabaseUrl) {
+            throw new Error('Supabase URL not configured');
+        }
+        
         // Prepare the training data
         const trainingPrompt = createTrainingPrompt();
         
-        // Call your existing Supabase Edge Function
-        const response = await fetch('/functions/v1/generate-chatbot', {
+        // Call your Supabase Edge Function with full URL
+        const response = await fetch(`${supabaseUrl}/functions/v1/generate-chatbot`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -469,6 +499,8 @@ async function trainAIModel() {
         // Check if it's a backend not available error
         if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
             addTrainingMessage("🔄 Backend not available yet. Using enhanced local training mode...", 'bot');
+        } else if (error.message.includes('Supabase URL not configured')) {
+            addTrainingMessage("❌ Supabase URL not configured. Using enhanced local training mode...", 'bot');
         } else {
             addTrainingMessage("❌ Training failed. Using enhanced local mode...", 'bot');
         }
