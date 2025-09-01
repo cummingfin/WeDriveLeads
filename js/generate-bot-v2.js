@@ -395,26 +395,16 @@ async function trainAIModel() {
         // Show training status
         addTrainingMessage("🤖 Training in progress...", 'bot');
         
-        // Get Supabase key
-        const supabaseKey = getSupabaseKey();
-        
-        if (!supabaseKey) {
-            // No Supabase key available, use fallback immediately
-            throw new Error('Supabase not configured, using fallback mode');
-        }
-        
         // Prepare the training data
         const trainingPrompt = createTrainingPrompt();
         
-        // Call OpenAI through Supabase Edge Function
-        const response = await fetch('/functions/v1/generate-chatbot', {
+        // Call our secure backend endpoint (not directly to OpenAI)
+        const response = await fetch('/api/train-chatbot', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${supabaseKey}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                prompt: trainingPrompt,
                 businessName: businessData.businessName,
                 businessType: businessData.businessType,
                 tone: businessData.tone,
@@ -474,9 +464,15 @@ async function trainAIModel() {
         
     } catch (error) {
         console.error('Training error:', error);
-        addTrainingMessage("❌ Training failed. Let me use a fallback method...", 'bot');
         
-        // Fallback to basic mode
+        // Check if it's a backend not available error
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            addTrainingMessage("🔄 Backend not available yet. Using enhanced local training mode...", 'bot');
+        } else {
+            addTrainingMessage("❌ Training failed. Using enhanced local mode...", 'bot');
+        }
+        
+        // Enhanced fallback mode with better responses
         setTimeout(() => {
             addTrainingMessage("Now I have everything I need - test me out!", 'bot');
             window.testMode = true;
@@ -497,7 +493,7 @@ async function trainAIModel() {
                         <button onclick="exitTestMode()" style="background: #00ff88; color: #1a1a1a; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
                             ✅ I'm Happy - Get My Embed Code
                         </button>
-                        </div>
+                    </div>
                 `;
                 messagesDiv.appendChild(exitDiv);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -684,26 +680,6 @@ function generateBasicResponse(userMessage) {
     
     // Default response for questions not covered
     return `Thank you for your question! I'm here to help with any information about ${businessData.businessName}. Is there anything specific about our ${services} that you'd like to know more about?`;
-}
-
-function getSupabaseKey() {
-    // In the browser, we need to get the Supabase key from the environment loader
-    // or use a fallback approach
-    
-    // Try to get from window object if set by env-loader
-    if (window.SUPABASE_ANON_KEY) {
-        return window.SUPABASE_ANON_KEY;
-    }
-    
-    // Try to get from env-loader if available
-    if (window.env && window.env.SUPABASE_ANON_KEY) {
-        return window.env.SUPABASE_ANON_KEY;
-    }
-    
-    // For now, we'll use a placeholder that will trigger the fallback
-    // In production, this should be properly configured
-    console.warn('Supabase key not found, using fallback mode');
-    return null;
 }
 
 function exitTestMode() {
