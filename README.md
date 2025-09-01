@@ -6,7 +6,7 @@ A modern, scalable SaaS website for AI-powered lead generation chatbots targetin
 
 ### Core Pages
 - **Landing Page** (`index.html`) - Modern, conversion-focused homepage
-- **Chatbot Generator** (`generate-bot.html`) - AI chatbot creation form
+- **Chatbot Generator** (`generate-bot-v2.html`) - AI chatbot creation form with conversational training
 - **Dashboard** (`dashboard.html`) - User dashboard with embed code
 - **Pricing** (`pricing.html`) - Three-tier pricing plans
 - **Contact** (`contact.html`) - Contact form with validation
@@ -25,7 +25,7 @@ A modern, scalable SaaS website for AI-powered lead generation chatbots targetin
 ```
 WeDriveLeads/
 ├── index.html              # Landing page
-├── generate-bot.html       # Chatbot builder UI
+├── generate-bot-v2.html    # Advanced chatbot builder with AI training
 ├── dashboard.html          # User dashboard
 ├── leads-tool.html         # Lead generation tool
 ├── pricing.html            # Pricing plans
