@@ -268,9 +268,10 @@ function nextStep() {
     document.getElementById(`step${currentStep}Content`).classList.add('active');
     document.getElementById(`step${currentStep}`).classList.add('active');
     
-    // If moving to step 2, collect data from step 1
+    // If moving to step 2, collect data from step 1 and start training
     if (currentStep === 2) {
         collectStep1Data();
+        startTraining();
     }
 }
 
@@ -304,11 +305,7 @@ function collectStep1Data() {
 }
 
 function startTraining() {
-    // Show training interface
-    document.getElementById('trainingOverlay').style.display = 'block';
-    document.getElementById('trainingChatbot').style.display = 'block';
-    
-    // Update training title
+    // Update training title with business name
     document.getElementById('trainingTitle').textContent = `${businessData.chatbotName} Training`;
     
     // Start with first question
@@ -383,43 +380,19 @@ function handleTrainingKeyPress(event) {
 }
 
 function completeTraining() {
-    addTrainingMessage("Perfect! I've learned everything I need to know about your business. Let me create your personalized AI chatbot now.", 'bot');
+    addTrainingMessage("Perfect! I've learned everything I need to know about your business. Now I have everything I need - test me out!", 'bot');
     
     setTimeout(() => {
-        addTrainingMessage("Your AI is ready! Would you like to test it first, or go straight to getting your embed code?", 'bot');
-        showTestOptions();
-    }, 2000);
-}
-
-function showTestOptions() {
-    const messagesDiv = document.getElementById('trainingMessages');
-    const optionsDiv = document.createElement('div');
-    optionsDiv.className = 'message bot';
-    optionsDiv.innerHTML = `
-        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-            <button onclick="startTestMode()" style="background: #00ff88; color: #1a1a1a; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                🧪 Test My AI
-            </button>
-            <button onclick="skipTestAndGenerate()" style="background: #e2e8f0; color: #1a1a1a; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                🚀 Get Embed Code
-            </button>
-        </div>
-    `;
-    messagesDiv.appendChild(optionsDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-function startTestMode() {
-    addTrainingMessage("Great! Let's test your AI. I'll switch to test mode where you can ask questions and see how your trained chatbot responds.", 'user');
-    
-    setTimeout(() => {
-        addTrainingMessage("🧪 **TEST MODE ACTIVATED**\n\nI'm now your trained AI assistant for " + businessData.businessName + ". Ask me anything about your business, services, pricing, or anything a customer might ask!", 'bot');
+        addTrainingMessage("Ask me anything about your business, services, pricing, or anything a customer might ask!", 'bot');
+        
+        // Switch to test mode immediately
+        window.testMode = true;
         
         // Change the input placeholder to indicate test mode
         const trainingInput = document.getElementById('trainingInput');
         trainingInput.placeholder = "Ask me anything about your business...";
         
-        // Add some sample questions to help users test
+        // Add sample questions and exit button
         setTimeout(() => {
             addTrainingMessage("💡 **Try asking me:**\n• What services do you offer?\n• What are your prices?\n• Do you offer emergency services?\n• What areas do you serve?\n• What makes you different from competitors?", 'bot');
             
@@ -438,10 +411,7 @@ function startTestMode() {
             messagesDiv.appendChild(exitDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }, 1000);
-        
-        // Switch to test mode
-        window.testMode = true;
-    }, 1000);
+    }, 2000);
 }
 
 function exitTestMode() {
@@ -451,18 +421,9 @@ function exitTestMode() {
         addTrainingMessage("Generating your personalized embed code with all your business knowledge...", 'bot');
         
         setTimeout(() => {
-            closeTraining();
-            generateFinalChatbot();
+            // Move to step 3
+            nextStep();
         }, 2000);
-    }, 1000);
-}
-
-function skipTestAndGenerate() {
-    addTrainingMessage("Skipping test mode and generating your embed code...", 'user');
-    
-    setTimeout(() => {
-        closeTraining();
-        generateFinalChatbot();
     }, 1000);
 }
 
