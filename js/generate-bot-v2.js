@@ -398,13 +398,14 @@ async function trainAIModel() {
         // Prepare the training data
         const trainingPrompt = createTrainingPrompt();
         
-        // Call our secure backend endpoint (not directly to OpenAI)
-        const response = await fetch('/api/train-chatbot', {
+        // Call your existing Supabase Edge Function
+        const response = await fetch('/functions/v1/generate-chatbot', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                prompt: trainingPrompt,
                 businessName: businessData.businessName,
                 businessType: businessData.businessType,
                 tone: businessData.tone,
